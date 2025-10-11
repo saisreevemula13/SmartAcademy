@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36401.2 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartAcademy", "SmartAcademy\SmartAcademy.csproj", "{DD54224D-C330-43BD-A0E0-E0CF06DDD4BD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{74E66A64-33FD-4A53-8402-8D506E839899} = {74E66A64-33FD-4A53-8402-8D506E839899}
+		{B0254C5E-77B2-4CF3-8F36-9BA2AF4D4106} = {B0254C5E-77B2-4CF3-8F36-9BA2AF4D4106}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{B0254C5E-77B2-4CF3-8F36-9BA2AF4D4106}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{74E66A64-33FD-4A53-8402-8D506E839899}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{87D690A7-A69B-4069-B25F-113D2E5BDE29}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DD54224D-C330-43BD-A0E0-E0CF06DDD4BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD54224D-C330-43BD-A0E0-E0CF06DDD4BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD54224D-C330-43BD-A0E0-E0CF06DDD4BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD54224D-C330-43BD-A0E0-E0CF06DDD4BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0254C5E-77B2-4CF3-8F36-9BA2AF4D4106}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0254C5E-77B2-4CF3-8F36-9BA2AF4D4106}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0254C5E-77B2-4CF3-8F36-9BA2AF4D4106}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0254C5E-77B2-4CF3-8F36-9BA2AF4D4106}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74E66A64-33FD-4A53-8402-8D506E839899}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74E66A64-33FD-4A53-8402-8D506E839899}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74E66A64-33FD-4A53-8402-8D506E839899}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74E66A64-33FD-4A53-8402-8D506E839899}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87D690A7-A69B-4069-B25F-113D2E5BDE29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87D690A7-A69B-4069-B25F-113D2E5BDE29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87D690A7-A69B-4069-B25F-113D2E5BDE29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87D690A7-A69B-4069-B25F-113D2E5BDE29}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1882FC87-7727-4586-B457-D2071009385D}
+	EndGlobalSection
+EndGlobal
