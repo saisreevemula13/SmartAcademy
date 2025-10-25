@@ -1,4 +1,4 @@
-using Application.AutoMapper;
+﻿using Application.AutoMapper;
 using Application.Interfaces;
 using Application.Services;
 using Application.Validators;
@@ -8,62 +8,94 @@ using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Infrastructure.Service;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
+// Step 1️⃣: Configure Serilog early (before building the app)
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName()
+    .Enrich.WithThreadId()
+    .CreateLogger();
+// Step 2️⃣: Tell the host to use Serilog
+builder.Host.UseSerilog();
+
+// Everything below is wrapped in try–catch
+try
+{
+    Log.Information("Starting SmartAcademy API...");
+
+    //Add services to the container
+    builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.ReferenceHandler =
+                System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+            options.JsonSerializerOptions.WriteIndented = true;
+        });
+
+    //Register FluentValidation validators
+    builder.Services.AddValidatorsFromAssemblyContaining<CreateCourseValidator>();
+    builder.Services.AddValidatorsFromAssemblyContaining<CustomStudentValidator>();
+    builder.Services.AddFluentValidationAutoValidation();
+
+    //AutoMapper registration
+    builder.Services.AddAutoMapper(cfg => cfg.AddProfile<AutoMapperProfile>());
+
+    //Repositories & Services
+    builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+    builder.Services.AddScoped<IStudentService, StudentService>();
+    builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+    builder.Services.AddScoped<ICourseService, CourseService>();
+    builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
+    builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+
+    //Swagger
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+
+    //EF Core DbContext
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+    );
+
+    //Build app (can throw exceptions if DI or config fails)
+    var app = builder.Build();
+
+    //Serilog HTTP request logging
+    app.UseSerilogRequestLogging();
+
+    //Database seeding
+    using (var scope = app.Services.CreateScope())
     {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-        options.JsonSerializerOptions.WriteIndented = true;
-    });
-builder.Services.AddValidatorsFromAssemblyContaining<CreateCourseValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CustomStudentValidator>();
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        DbInitializer.Initialize(context);
+    }
 
-// Enable automatic validation for [ApiController] DTOs
-builder.Services.AddFluentValidationAutoValidation();
+    // Middleware pipeline
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
 
-// ---- AutoMapper registration (15.x syntax) ----
+    app.UseMiddleware<ExceptionMiddleware>(); // global exception handler
+    app.UseHttpsRedirection();
+    app.UseAuthorization();
+    app.MapControllers();
 
-builder.Services.AddAutoMapper(cfg => cfg.AddProfile<AutoMapperProfile>());
-
-// ---- Repository & Service DI ----
-builder.Services.AddScoped<IStudentRepository, StudentRepository>();
-builder.Services.AddScoped<IStudentService, StudentService>();
-builder.Services.AddScoped<ICourseRepository, CourseRepository>();
-builder.Services.AddScoped<ICourseService, CourseService>();
-builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
-builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
-
-// ---- Swagger / API Explorer ----
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-// ---- EF Core DbContext ----
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-);
-
-var app = builder.Build();
-
-// ---- Seed database ----
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    DbInitializer.Initialize(context);
+    // Run the application
+    app.Run();
 }
-
-// ---- Middleware pipeline ----
-if (app.Environment.IsDevelopment())
+catch (Exception ex)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    //  Logs any startup or fatal crash
+    Log.Fatal(ex, "SmartAcademy API terminated unexpectedly during startup");
 }
-
-app.UseMiddleware<ExceptionMiddleware>(); // Global exception handling
-app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers();
-
-app.Run();
+finally
+{
+    // Always flush remaining log entries
+    Log.CloseAndFlush();
+}

@@ -27,8 +27,8 @@ namespace Infrastructure.Repositories
         public async Task<Course> GetByIdAsync(int id)
         {
             return await _context.Courses.
-                Include(x => x.Enrollments).
-                ThenInclude(s => s.Student).FirstOrDefaultAsync(x=>x.Id==id);
+            Include(x => x.Enrollments).
+            ThenInclude(s => s.Student).FirstOrDefaultAsync(x => x.Id == id);
         }
         public async Task<Course> AddAsync(Course course)
         {
