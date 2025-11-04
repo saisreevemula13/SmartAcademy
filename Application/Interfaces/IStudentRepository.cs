@@ -9,7 +9,7 @@ namespace Application.Interfaces
 {
     public interface IStudentRepository
     {
-        Task<List<Student>> GetAllAsync();
+        Task<List<Student>> GetAllAsync(string? filterOn=null, string? filterQuery=null);
         Task<Student> GetByIdAsync(int id);
         Task<Student> AddAsync(Student student);
         Task<Student> UpdateAsync(int id, Student student);

@@ -22,10 +22,10 @@ namespace Application.Services
             _logger = logger;
         }
 
-        public async Task<List<StudentDTO>> GetAll()
+        public async Task<List<StudentDTO>> GetAll(string? filterOn=null, string? filterQuery=null)
         {
             _logger.LogDebug("Getting all students from repository...");
-            var students = await _studentRepository.GetAllAsync();
+            var students = await _studentRepository.GetAllAsync(filterOn,filterQuery);
             _logger.LogInformation("Retrieved {Count} students", students.Count);
             return _mapper.Map<List<StudentDTO>>(students);
         }

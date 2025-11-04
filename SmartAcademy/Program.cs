@@ -7,10 +7,14 @@ using FluentValidation.AspNetCore;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Infrastructure.Service;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Web;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
+    AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
 // Step 1️⃣: Configure Serilog early (before building the app)
 Log.Logger = new LoggerConfiguration()

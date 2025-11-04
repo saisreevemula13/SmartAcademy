@@ -10,7 +10,7 @@ namespace Application.Interfaces
 {
     public interface IStudentService
     {
-        Task<List<StudentDTO>> GetAll();
+        Task<List<StudentDTO>> GetAll(string? filterOn=null, string? filterQuery=null);
         Task<StudentDTO> GetById(int id);
         Task<StudentDTO> Add(CreateStudDTO student);
         Task<StudentDTO> Update(int id, UpdateStudDTO student);

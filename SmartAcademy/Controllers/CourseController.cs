@@ -13,9 +13,11 @@ namespace SmartAcademy.Controllers
             public CourseController(ICourseService service) => _service = service;
 
             [HttpGet]
-            public async Task<IActionResult> GetAllCourses()
+            public async Task<IActionResult> GetAllCourses([FromQuery] string? filterOn, [FromQuery] string? filterQuery,
+                [FromQuery] string? sortBy, [FromQuery] bool? isAscending=null,
+                [FromQuery] int pageNumber = 1, [FromQuery] int pageSize=1000)
             {
-                var courses = await _service.GetAll();
+                var courses = await _service.GetAll(filterOn, filterQuery,sortBy,isAscending,pageNumber,pageSize);
                 return Ok(courses); // Returns a normal JSON array
             }
 

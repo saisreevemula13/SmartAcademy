@@ -3,6 +3,7 @@ using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 public class StudentRepository : IStudentRepository
 {
@@ -15,14 +16,22 @@ public class StudentRepository : IStudentRepository
         _logger = logger;
     }
 
-    public async Task<List<Student>> GetAllAsync()
+    public async Task<List<Student>> GetAllAsync(string? filterOn,string? filterQuery)
     {
         _logger.LogDebug("Fetching all students from database...");
-        return await _context.Students
+        var studList=  _context.Students
             .Include(s => s.Enrollments)
             .ThenInclude(x => x.Course)
             .AsNoTracking()
-            .ToListAsync();
+            .AsQueryable();
+        if (!string.IsNullOrWhiteSpace(filterOn) && !string.IsNullOrWhiteSpace(filterQuery))
+        {
+            if (filterOn.Equals(("Name"), StringComparison.OrdinalIgnoreCase))
+            {
+                studList=studList.Where(x=>x.Name.Contains(filterQuery));
+            }
+        }
+        return await studList.ToListAsync();
     }
 
     public async Task<Student> GetByIdAsync(int id)

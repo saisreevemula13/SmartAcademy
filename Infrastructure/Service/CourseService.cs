@@ -17,9 +17,11 @@ namespace Infrastructure.Service
                 _mapper = mapper;
             }
 
-            public async Task<IEnumerable<CourseDTO>> GetAll()
+            public async Task<IEnumerable<CourseDTO>> GetAll(string? filterOn = null, string? filterQuery = null,
+                string? sortBy=null, bool? isAscending=null,
+                 int pageNumber = 1,int pageSize = 1000)
             {
-                var courses = await _repository.GetAllAsync();
+                var courses = await _repository.GetAllAsync(filterOn,filterQuery,sortBy,isAscending);
                 return _mapper.Map<IEnumerable<CourseDTO>>(courses);
             }
 

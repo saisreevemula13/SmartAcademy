@@ -12,6 +12,7 @@ namespace Application.DTO
         public string Name { get; set; }
         public string Description { get; set; }
 
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         // Flattened list of students from enrollments
         public List<StudentInCourseDTO> Students { get; set; }
     }

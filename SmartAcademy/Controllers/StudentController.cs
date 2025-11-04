@@ -1,11 +1,15 @@
 ﻿using Application.DTO;
 using Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web.Resource;
 
 namespace SmartAcademy.Controllers
 {
+   
     [Route("api/[controller]")]
     [ApiController]
+    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
     public class StudentController : ControllerBase
     {
         private readonly IStudentService _service;
@@ -17,11 +21,12 @@ namespace SmartAcademy.Controllers
             _logger = logger;
         }
 
+        [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetAllStudents()
+        public async Task<IActionResult> GetAllStudents([FromQuery] string? filterOn, [FromQuery] string? filterQuery)
         {
             _logger.LogInformation("Fetching all students...");
-            var students = await _service.GetAll();
+            var students = await _service.GetAll(filterOn,filterQuery);
             _logger.LogInformation("Fetched {Count} students successfully", students.Count);
             return Ok(students);
         }
