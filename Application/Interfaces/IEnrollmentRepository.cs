@@ -10,7 +10,7 @@ namespace Application.Interfaces
 {
     public interface IEnrollmentRepository
     {
-        Task<IEnumerable<Enrollment>> GetAllAsync();
+        Task<List<Enrollment>> GetAllAsync(string? filterOn=null,string? filterQuery=null, string? sortBy = null, Boolean? isAscending = true,int pageSize=1,int pageNumber=1000);
         Task<Enrollment> GetByIdAsync(int id);
         Task<Enrollment> UpdateByIdAsync(int id, Enrollment enrollment);
         Task<Enrollment> CreateAsync(Enrollment enrollment);

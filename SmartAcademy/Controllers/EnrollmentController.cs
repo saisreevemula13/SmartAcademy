@@ -17,9 +17,10 @@ namespace SmartAcademy.Controllers
 
         // GET: api/enrollments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EnrollmentDTO>>> GetAll()
+        public async Task<ActionResult<IEnumerable<EnrollmentDTO>>> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery,
+            [FromQuery] string? sortBy, [FromQuery] Boolean? isAscending, [FromQuery] int pageNumber=1, [FromQuery] int pageSize=1000)
         {
-            var enrollments = await _enrollmentService.GetAllEnrollments();
+            var enrollments = await _enrollmentService.GetAllEnrollments(filterOn, filterQuery, sortBy, isAscending,pageNumber,pageSize);
             return Ok(enrollments);
         }
 

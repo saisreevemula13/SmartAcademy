@@ -48,12 +48,13 @@ namespace Infrastructure.Service
             return _mapper.Map<EnrollmentDTO>(enrollment);
         }
 
-        public async Task<IEnumerable<EnrollmentDTO>> GetAllEnrollments()
+        public async Task<List<EnrollmentDTO>> GetAllEnrollments(string? filterOn=null, string? filterQuery=null, string? sortBy = null, Boolean? isAscending = true,
+             int pageNumber = 1, int pageSize = 1000)
         {
-            var enrollment = await _enrollmentRepository.GetAllAsync();
+            var enrollment = await _enrollmentRepository.GetAllAsync(filterOn, filterQuery,sortBy,isAscending,pageNumber,pageSize);
             if (enrollment == null)
                 throw new NotFoundException($"Enrollments are not found to display");
-            return _mapper.Map<IEnumerable<EnrollmentDTO>>(enrollment);
+            return _mapper.Map<List<EnrollmentDTO>>(enrollment);
         }
 
         public async Task<EnrollmentDTO> GetEnrollmentById(int id)

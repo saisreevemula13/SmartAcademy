@@ -72,11 +72,11 @@ try
     app.UseSerilogRequestLogging();
 
     //Database seeding
-    using (var scope = app.Services.CreateScope())
-    {
-        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        DbInitializer.Initialize(context);
-    }
+    //using (var scope = app.Services.CreateScope())
+    //{
+    //    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    //    DbInitializer.Initialize(context);
+    //}
 
     // Middleware pipeline
     if (app.Environment.IsDevelopment())
