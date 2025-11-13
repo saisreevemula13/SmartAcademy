@@ -8,13 +8,38 @@ using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Infrastructure.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Web;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
-    AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+// jwt validation here
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+//step-2 Add authorization
+builder.Services.AddAuthorization();
+
 
 // Step 1️⃣: Configure Serilog early (before building the app)
 Log.Logger = new LoggerConfiguration()
@@ -87,6 +112,7 @@ try
 
     app.UseMiddleware<ExceptionMiddleware>(); // global exception handler
     app.UseHttpsRedirection();
+    app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();
 
